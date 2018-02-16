@@ -8,6 +8,7 @@
 namespace Step\Acceptance;
 
 use AcceptanceTester;
+use Facebook\WebDriver\WebDriverElement;
 use Pages\VideoPage;
 
 class VideoPageSteps
@@ -74,23 +75,54 @@ class VideoPageSteps
         $this->I->moveMouseOver(VideoPage::getFoundVideoPreviewImgByIndex($this->rand_index));
     }
 
+
     /**
-     * @Then I see video trailer for the found video during :arg1 seconds
-     * @param $timeout
+     * @Then I see video trailer image change :arg1 times with an interval of less than :arg2 seconds
+     * @param $changes_count
+     * @param $image_change_timeout
      */
-    public function iSeeVideoTrailerForTheFoundVideoDuringSeconds($timeout)
+    public function iSeeVideoTrailerImageChangeTimesWithAnIntervalOfLessThanSeconds($changes_count, $image_change_timeout)
+    {
+        $this->waitTrailerImagesChanges(VideoPage::getFoundVideoPreviewImgByIndex($this->rand_index), $changes_count, $image_change_timeout);
+    }
+
+    /**
+     * Функция, позволяющая проверить работу трейлера видео
+     *
+     * Для переданного элемента $element выполняется число проверок, равное $changes_count.
+     * В каждой проверке выполняется функция waitForElementChange, ожидающая в течении времени $image_change_timeout
+     * изменение атрибута "src".
+     *
+     * Пример: при $changes_count = 3 и $image_change_timeout = 1, будет проверено, что атрибут src (картинка) изменится
+     * 3 раза, причем каждое изменение должно происходить не более чем за 1 секунду
+     *
+     * @param $element
+     * @param $changes_count
+     * @param $image_change_timeout
+     */
+    private function waitTrailerImagesChanges($element, $changes_count, $image_change_timeout)
     {
 
-        $currentVideoTrailerImage = $this->I->grabAttributeFrom(VideoPage::getFoundVideoPreviewImgByIndex($this->rand_index), "src");
+        while ($changes_count > 0) {
 
-        while ($timeout / 2 > 0) {
-            $this->I->wait(2);
+            $current_src_attribute_value = $this->I->grabAttributeFrom($element, "src");
 
-            $updatedVideoTrailerImage = $this->I->grabAttributeFrom(VideoPage::getFoundVideoPreviewImgByIndex($this->rand_index), "src");
-            $this->I->assertNotEquals($currentVideoTrailerImage, $updatedVideoTrailerImage);
+            $this->I->waitForElementChange(VideoPage::getFoundVideoPreviewImgByIndex($this->rand_index),
+                function (WebDriverElement $el) use ($current_src_attribute_value, $changes_count) {
+                    $updated_src_attribute_value = $el->getAttribute("src");
+                    print_r("\nupdated src attribute value: " . $updated_src_attribute_value);
 
-            $currentVideoTrailerImage = $updatedVideoTrailerImage;
-            $timeout--;
+                    if ($current_src_attribute_value !== $updated_src_attribute_value) {
+                        print_r("\ntrailer image was changed!\nold value: " . $current_src_attribute_value
+                            . "\nnew value: " . $updated_src_attribute_value . "\n");
+                        return true;
+                    }
+
+                    print_r("\ntrailer remains the same");
+                    return false;
+                }, $image_change_timeout);
+
+            $changes_count--;
         }
     }
 }
