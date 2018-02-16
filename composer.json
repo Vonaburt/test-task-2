@@ -1,0 +1,18 @@
+{
+  "name": "test-task-2",
+  "description": "Test task for interview",
+  "authors": [
+    {
+      "name": "Vadim Trubanov",
+      "email": "vonaburt@gmail.com"
+    }
+  ],
+  "require-dev": {
+    "codeception/codeception": "2.3.8"
+  },
+  "autoload": {
+    "psr-0": {
+      "Pages": "tests/_support/Pages/"
+    }
+  }
+}
