@@ -11,13 +11,13 @@ class VideoPage
 {
     public static $url = "/video";
 
-    public static $searchField = "input.input__control[type='search']";
+    public static $searchField = "input[type='search']";
     public static $searchButton = "button[type='submit']";
 
     public static $searchResultsDiv = "div.page-layout_page_search";
 
     public static function getFoundVideoPreviewImgByIndex($index)
     {
-        return "div.serp-item[role=listitem]:nth-child(" . $index . ") img";
+        return "div.serp-list_type_search div:nth-child(" . $index . ") img";
     }
 }
