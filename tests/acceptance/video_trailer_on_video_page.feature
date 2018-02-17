@@ -9,4 +9,4 @@ Feature: Video trailer on video page
     And Page is loaded during "30" seconds
 
     When I move mouse on any of the first "5" found video
-    Then I see video trailer image change "3" times with an interval of less than "1" seconds
+    Then I see video trailer image change "2" times with an interval of less than "1" seconds
