@@ -20,6 +20,7 @@
 #!/bin/sh
 java -jar selenium-server-standalone-3.9.1.jar
 ```
+где `selenium-server-standalone-3.9.1.jar` - путь до файла selenium-server
 
 Скрипт start.sh, для запуска теста:
 
